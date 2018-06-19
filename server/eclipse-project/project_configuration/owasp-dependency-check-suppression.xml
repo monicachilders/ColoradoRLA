@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+  <!-- CVE-2018-1115 is related to the Postgresql SERVER, not the driver library -->
+   <suppress>
+      <notes><![CDATA[
+      file name: postgresql-42.2.2.jar
+      ]]></notes>
+      <gav regex="true">^org\.postgresql:postgresql:.*$</gav>
+      <cve>CVE-2018-1115</cve>
+   </suppress>
+
+   <!-- Spark 2.6.0 has some issues; 2.7.2 resolves them, but we need to
+        adjust our use of the library if we update.
+   -->
+   <suppress>
+     <notes><![CDATA[
+     file name: jetty-xml-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-xml:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: jetty-webapp-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-webapp:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: jetty-client-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-client:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: websocket-common-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty\.websocket:websocket-common:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: websocket-client-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty\.websocket:websocket-client:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: websocket-server-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty\.websocket:websocket-server:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: websocket-servlet-9.4.4.v20170414.jar
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty\.websocket:websocket-servlet:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <!-- As of mid june 2018, this isn't resolved; it is a transitive
+        dependency of Hibernate's caching.
+        http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2017-15095
+        http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2017-17485
+        http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2017-7525
+        http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2018-5968
+        http://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2018-7489
+   -->
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/com.fasterxml.jackson.core/jackson-databind/pom.xml
+     ]]></notes>
+     <gav regex="true">^com\.fasterxml\.jackson\.core:jackson-databind:.*$</gav>
+     <cpe>cpe:/a:fasterxml:jackson-databind</cpe>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-http/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-http:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-security/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-security:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-continuation/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-continuation:.*$</gav>
+     <cpe>cpe:/a:jetty:jetty</cpe>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-continuation/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-continuation:.*$</gav>
+     <cpe>cpe:/a:eclipse:jetty</cpe>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-util/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-util:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-server/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-server:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+
+   <suppress>
+     <notes><![CDATA[
+     file name: ehcache-2.10.3.jar/rest-management-private-classpath/META-INF/maven/org.eclipse.jetty/jetty-servlet/pom.xml
+     ]]></notes>
+     <gav regex="true">^org\.eclipse\.jetty:jetty-servlet:.*$</gav>
+     <cve>CVE-2017-9735</cve>
+   </suppress>
+</suppressions>
