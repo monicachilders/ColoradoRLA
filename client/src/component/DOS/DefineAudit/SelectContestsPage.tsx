@@ -137,18 +137,15 @@ const SelectContestsPage = (props: PageProps) => {
         nextPage();
     };
 
-    const contentDiv = !haveSelectedContests
-                     ? <SelectContestsForm forms={ forms }
-                                           contests={ contests }
-                                           isAuditable={ isAuditable } />
-                     : <SelectedContests auditedContests={ auditedContests }
-                                         contests={ contests } />;
-
     return (
         <div>
             <Nav />
             <Breadcrumb />
-            { contentDiv }
+            <SelectContestsForm forms={ forms }
+                                contests={ contests }
+                                auditedContests={auditedContests}
+                                isAuditable={ isAuditable } />
+
             <div>
                 <button onClick={ back } className='pt-button'>
                     Back
