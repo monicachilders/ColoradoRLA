@@ -131,9 +131,7 @@ const SelectContestsPage = (props: PageProps) => {
     const haveSelectedContests = !_.isEmpty(auditedContests);
 
     const onSaveAndNext = () => {
-        if (!haveSelectedContests) {
-            selectContestsForAudit(forms.selectContestsForm);
-        }
+        selectContestsForAudit(forms.selectContestsForm);
         nextPage();
     };
 
