@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.OptionalInt;
 import java.util.Set;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
@@ -63,6 +65,8 @@ import us.freeandfair.corla.persistence.PersistentEntity;
 // note: CountyContestComparisionAudit is not serializable because it references
 // CountyDashboard, which is not serializable.
 public class CountyContestComparisonAudit implements PersistentEntity {
+  private static final Logger log = LogManager.getLogger(CountyContestComparisonAudit.class);
+
   /**
    * The database stored precision for decimal types.
    */
@@ -410,6 +414,14 @@ public class CountyContestComparisonAudit implements PersistentEntity {
       // risk limit has not been achieved
       // note that it _is_ possible to go from RISK_LIMIT_ACHIEVED to
       // IN_PROGRESS if a sample or set of samples is "unaudited"
+
+      // TODO Can you cause this situation? Does this alert us nicely?
+      if (my_audit_status == AuditStatus.RISK_LIMIT_ACHIEVED) {
+          log.warn("Already achieved the risk limit, but moving back to in progress: "
+                   + my_dashboard.toString() + ": "
+                   + my_audit_status + " -> " + AuditStatus.IN_PROGRESS);
+      }
+
       my_audit_status = AuditStatus.IN_PROGRESS;
     }
   }
@@ -466,6 +478,10 @@ public class CountyContestComparisonAudit implements PersistentEntity {
                                                                     my_one_vote_under_count,
                                                                     my_one_vote_over_count,
                                                                     my_two_vote_over_count);
+      log.debug("optimistic samples to audit: "
+                + my_optimistic_samples_to_audit
+                + " -> " + optimistic);
+
       my_optimistic_samples_to_audit = optimistic.intValue();
       my_optimistic_recalculate_needed = false;
     }
@@ -474,19 +490,34 @@ public class CountyContestComparisonAudit implements PersistentEntity {
       my_estimated_samples_to_audit = my_optimistic_samples_to_audit;
     } else {
       // compute the "fudge factor" for the estimate
+      // FIXME extract-fn and add references to which paper this appears in
       final BigDecimal audited_samples = BigDecimal.valueOf(my_dashboard.auditedSampleCount());
       final BigDecimal overstatements =
           BigDecimal.valueOf(my_one_vote_over_count + my_two_vote_over_count);
-      final BigDecimal fudge_factor;
+      final BigDecimal scalingFactor;
+
       if (audited_samples.equals(BigDecimal.ZERO)) {
-        fudge_factor = BigDecimal.ONE;
+        scalingFactor = BigDecimal.ONE;
       } else {
-        fudge_factor =
-            BigDecimal.ONE.add(overstatements.divide(audited_samples, MathContext.DECIMAL128));
+        scalingFactor = BigDecimal
+                        .ONE
+                        .add(overstatements
+                             .divide(audited_samples, MathContext.DECIMAL128));
       }
-      final BigDecimal estimated =
-          BigDecimal.valueOf(my_optimistic_samples_to_audit).multiply(fudge_factor);
-      my_estimated_samples_to_audit = estimated.setScale(0, RoundingMode.CEILING).intValue();
+
+      final int estimated = BigDecimal
+                            .valueOf(my_optimistic_samples_to_audit)
+                            .multiply(scalingFactor)
+                            .setScale(0, RoundingMode.CEILING)
+                            .intValue();
+
+      log.debug("recalculated estimated samples\n"
+                + "overstatements: " + overstatements + "\n"
+                + "fudge_factor: " + scalingFactor + "\n"
+                + "estimated_samples_to_audit: "
+                + my_estimated_samples_to_audit + " -> " + estimated);
+
+      my_estimated_samples_to_audit = estimated;
     }
     my_estimated_recalculate_needed = false;
   }
@@ -547,7 +578,7 @@ public class CountyContestComparisonAudit implements PersistentEntity {
       result = ceil.max(over_under_sum);
     }
 
-    Main.LOGGER.info("estimate for contest " + contest().name() +
+    log.info("estimate for contest " + contest().name() +
                      ", diluted margin " + contestResult().countyDilutedMargin() +
                      ": " + result);
     return result;
@@ -661,6 +692,7 @@ public class CountyContestComparisonAudit implements PersistentEntity {
     }
 
     my_discrepancies.put(the_record, the_type);
+    log.debug("Recorded discrepency: " + the_record + "; type: " + the_type);
   }
 
   /**
@@ -723,6 +755,7 @@ public class CountyContestComparisonAudit implements PersistentEntity {
    * specified.
    */
   @SuppressWarnings("checkstyle:magicnumber")
+  // FIXME would an enum solve the magic number problem?
   public int discrepancyCount(final int the_type) {
     final int result;
 
